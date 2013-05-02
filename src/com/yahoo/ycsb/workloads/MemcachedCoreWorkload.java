@@ -17,6 +17,7 @@
 
 package com.yahoo.ycsb.workloads;
 
+import java.util.Hashtable;
 import com.yahoo.ycsb.*;
 import com.yahoo.ycsb.generator.ChurnGenerator;
 import com.yahoo.ycsb.generator.CounterGenerator;
@@ -77,6 +78,16 @@ public class MemcachedCoreWorkload extends Workload {
 	CounterGenerator transactioninsertkeysequence;
 
 	IntegerGenerator scanlength;
+	
+	DiscreteGenerator costchooser;
+	
+	UniformIntegerGenerator highcostchooser;
+	
+	UniformIntegerGenerator midcostchooser;
+	
+	UniformIntegerGenerator lowcostchooser;
+	
+	Hashtable<String, Integer> costs;
 
 	boolean orderedinserts;
 
@@ -96,6 +107,14 @@ public class MemcachedCoreWorkload extends Workload {
 
 		keysequence = new CounterGenerator(insertstart);
 		operationchooser = new DiscreteGenerator();
+		costchooser = new DiscreteGenerator();
+		highcostchooser = new UniformIntegerGenerator(Config.getConfig().high_cost_min,
+							Config.getConfig().high_cost_max);
+		midcostchooser = new UniformIntegerGenerator(Config.getConfig().mid_cost_min,
+							Config.getConfig().mid_cost_max);
+		lowcostchooser = new UniformIntegerGenerator(Config.getConfig().low_cost_min,
+							Config.getConfig().low_cost_max);
+		costs = new Hashtable<String, Integer>();
 		
 		if (Config.getConfig().memadd_proportion > 0) {
 			operationchooser.addValue(Config.getConfig().memadd_proportion, "ADD");
@@ -132,6 +151,16 @@ public class MemcachedCoreWorkload extends Workload {
 		}
 		if (Config.getConfig().memupdate_proportion > 0) {
 			operationchooser.addValue(Config.getConfig().memupdate_proportion, "UPDATE");
+		}
+		
+		if (Config.getConfig().high_cost_prob > 0) {
+			costchooser.addValue(Config.getConfig().high_cost_prob, "HIGH");
+		}
+		if (Config.getConfig().mid_cost_prob > 0) {
+			costchooser.addValue(Config.getConfig().mid_cost_prob, "MID");
+		}
+		if (Config.getConfig().low_cost_prob > 0) {
+			costchooser.addValue(Config.getConfig().low_cost_prob, "LOW");
 		}
 		
 		transactioninsertkeysequence = new CounterGenerator(recordcount);
@@ -188,6 +217,16 @@ public class MemcachedCoreWorkload extends Workload {
 		}
 		String dbkey = Config.getConfig().key_prefix + keynum;
 		String value = Utils.ASCIIString(Config.getConfig().value_length);
+		Integer cost = 0;
+		String costl = costchooser.nextString();
+		if (costl.compareTo("HIGH") == 0) {
+			cost = highcostchooser.nextInt();
+		} else if (costl.compareTo("MID") == 0) {
+			cost = midcostchooser.nextInt();
+		} else if (costl.compareTo("LOW") == 0) {
+			cost = lowcostchooser.nextInt();
+		}
+		costs.put(dbkey, cost);
 		
 		if (((Memcached)memcached).set(dbkey, value) == 0)
 			return true;
@@ -291,7 +330,12 @@ public class MemcachedCoreWorkload extends Workload {
 		}
 		String keyname = Config.getConfig().key_prefix + keynum;
 
-		memcached.get(keyname, null);
+		if (memcached.get(keyname, null) != 0) {
+			Integer cost = costs.get(keyname);
+				if (cost != null) {
+				}
+			// TODO: increment the miss cost
+		}
 	}
 	
 	public long doTransactionGets(Memcached memcached) {

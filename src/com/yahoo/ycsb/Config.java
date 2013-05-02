@@ -55,6 +55,16 @@ public class Config implements Serializable{
 	public static final String WORKLOAD_PROPERTY = "workload";
 	public static final String WRITE_ALL_FIELDS_PROPERTY = "writeallfields";
 	
+	public static final String HIGH_COST_MAX_PROPERTY = "highcostmax";
+	public static final String HIGH_COST_MIN_PROPERTY = "highcostmin";
+	public static final String HIGH_COST_PROB_PROPERTY = "highcostprob";
+	public static final String MID_COST_MAX_PROPERTY = "midcostmax";
+	public static final String MID_COST_MIN_PROPERTY = "midcostmin";
+	public static final String MID_COST_PROB_PROPERTY = "midcostprob";
+	public static final String LOW_COST_MAX_PROPERTY = "lowcostmax";
+	public static final String LOW_COST_MIN_PROPERTY = "lowcostmin";
+	public static final String LOW_COST_PROB_PROPERTY = "lowcostprob";
+	
 	public int churn_delta = 1;
 	public String db = null;
 	public boolean do_transactions = false;
@@ -103,6 +113,16 @@ public class Config implements Serializable{
 	public int value_length = 256;
 	public String workload = null;
 	public boolean write_all_fields = false;
+	
+	public int high_cost_max = 500;
+	public int high_cost_min = 251;
+	public double high_cost_prob = 0.05;
+	public int mid_cost_max = 250;
+	public int mid_cost_min = 101;
+	public double mid_cost_prob = 0.15;
+	public int low_cost_max = 100;
+	public int low_cost_min = 51;
+	public double low_cost_prob = 0.8;
 	
 	public static final String INSERT_COUNT_PROPERTY = "insertcount";
 	
@@ -213,6 +233,24 @@ public class Config implements Serializable{
 				workload = value;
 			} else if (property.equals(WRITE_ALL_FIELDS_PROPERTY)) {
 				write_all_fields = (new Boolean(value)).booleanValue();
+			} else if (property.equals(HIGH_COST_MAX_PROPERTY)) {
+				high_cost_max = (new Integer(value)).intValue();
+			} else if (property.equals(HIGH_COST_MIN_PROPERTY)) {
+				high_cost_min = (new Integer(value)).intValue();
+			} else if (property.equals(HIGH_COST_PROB_PROPERTY)) {
+				high_cost_prob = (new Double(value)).doubleValue();
+			} else if (property.equals(MID_COST_MAX_PROPERTY)) {
+				mid_cost_max = (new Integer(value)).intValue();
+			} else if (property.equals(MID_COST_MIN_PROPERTY)) {
+				mid_cost_min = (new Integer(value)).intValue();
+			} else if (property.equals(MID_COST_PROB_PROPERTY)) {
+				mid_cost_prob = (new Double(value)).doubleValue();
+			} else if (property.equals(LOW_COST_MAX_PROPERTY)) {
+				low_cost_max = (new Integer(value)).intValue();
+			} else if (property.equals(LOW_COST_MIN_PROPERTY)) {
+				low_cost_min = (new Integer(value)).intValue();
+			} else if (property.equals(LOW_COST_PROB_PROPERTY)) {
+				low_cost_prob = (new Double(value)).doubleValue();
 			} else {
 				System.out.println("Unknown property " + property + " with value " + value);
 				System.exit(0);
