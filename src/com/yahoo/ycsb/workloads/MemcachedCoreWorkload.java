@@ -17,7 +17,6 @@
 
 package com.yahoo.ycsb.workloads;
 
-import java.util.Hashtable;
 import com.yahoo.ycsb.*;
 import com.yahoo.ycsb.generator.ChurnGenerator;
 import com.yahoo.ycsb.generator.CounterGenerator;
@@ -29,6 +28,8 @@ import com.yahoo.ycsb.generator.SkewedLatestGenerator;
 import com.yahoo.ycsb.generator.UniformIntegerGenerator;
 import com.yahoo.ycsb.generator.ZipfianGenerator;
 import com.yahoo.ycsb.memcached.Memcached;
+
+import java.util.Hashtable;
 
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD
@@ -333,8 +334,8 @@ public class MemcachedCoreWorkload extends Workload {
 		if (memcached.get(keyname, null) != 0) {
 			Integer cost = costs.get(keyname);
 				if (cost != null) {
+					System.out.println("[MISS] " + cost);
 				}
-			// TODO: increment the miss cost
 		}
 	}
 	
