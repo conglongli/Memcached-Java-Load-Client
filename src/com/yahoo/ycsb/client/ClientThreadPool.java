@@ -3,10 +3,13 @@ package com.yahoo.ycsb.client;
 import com.yahoo.ycsb.Config;
 import com.yahoo.ycsb.DataStore;
 import com.yahoo.ycsb.DataStoreException;
+import com.yahoo.ycsb.ReturnMsg;
 import com.yahoo.ycsb.UnknownDataStoreException;
 import com.yahoo.ycsb.Workload;
 import com.yahoo.ycsb.database.DBFactory;
 import com.yahoo.ycsb.memcached.MemcachedFactory;
+
+import java.util.Hashtable;
 
 /**
  * A thread pool is a group of a limited number of threads that are used to
@@ -16,7 +19,10 @@ public class ClientThreadPool extends ThreadGroup {
 	private boolean isAlive;
 	private int threadID;
 	private int ops;
+	private int total_miss_cost;
+	private int total_miss;
 	private static int threadPoolID;
+	private Hashtable<String, Integer> costs;
 
 	public ClientThreadPool(int numThreads, int ops, Workload workload) {
 		super("ThreadPool-" + (threadPoolID++));
@@ -24,6 +30,8 @@ public class ClientThreadPool extends ThreadGroup {
 		setDaemon(true);
 
 		isAlive = true;
+		
+		costs = new Hashtable<String, Integer>();
 		
 		for (int i = 0; i < numThreads; i++) {
 			DataStore db = null;
@@ -59,6 +67,31 @@ public class ClientThreadPool extends ThreadGroup {
 		if (isAlive) {
 			isAlive = false;
 			interrupt();
+		}
+	}
+	
+	public synchronized void processResult(ReturnMsg result) {
+		if (result.op.compareTo("SET") == 0) {
+			if (result.result == true) {
+				if (costs.get(result.dbkey) == null) {
+					costs.put(result.dbkey, result.cost);
+				}
+			}
+		} else if (result.op.compareTo("GET") == 0) {
+			if (result.miss == true) {
+				Integer value = costs.get(result.dbkey);
+				if (value == null) {
+					total_miss_cost += result.cost;
+					total_miss += 1;
+					costs.put(result.dbkey, result.cost);
+				} else {
+					total_miss_cost += value;
+					total_miss += 1;
+				}
+				if (result.num_op == 2) {
+					ops--;
+				}
+			}
 		}
 	}
 
@@ -101,10 +134,17 @@ public class ClientThreadPool extends ThreadGroup {
 
 		public void run() {
 			while (!isInterrupted() && getTask()) {
-				if (Config.getConfig().do_transactions) {
+				/*if (Config.getConfig().do_transactions) {
 					workload.doTransaction(db);
 				} else {
 					workload.doInsert(db);
+				}*/
+				if (Config.getConfig().operation_count - ops > Config.getConfig().record_count) {
+					ReturnMsg result = workload.doTransaction(db);
+					processResult(result);
+				} else {
+					ReturnMsg result = workload.doInsert(db);
+					processResult(result);
 				}
 			}
 			
@@ -116,6 +156,8 @@ public class ClientThreadPool extends ThreadGroup {
 			}
 			
 			System.out.println("Client Thread Done");
+			System.out.println("Total Miss Cost: " + total_miss_cost);
+			System.out.println("Total Miss: " + total_miss);
 		}
 	}
 }

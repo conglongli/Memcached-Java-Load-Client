@@ -176,7 +176,7 @@ public class DBCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public boolean doInsert(DataStore db) {
+	public ReturnMsg doInsert(DataStore db) {
 		int keynum = keysequence.nextInt();
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
@@ -189,9 +189,9 @@ public class DBCoreWorkload extends Workload {
 			values.put(fieldkey, data);
 		}
 		if (((DB)db).insert(Config.getConfig().table_name, dbkey, values) == 0)
-			return true;
+			return new ReturnMsg(true, null, null, null, false, 0);
 		else
-			return false;
+			return new ReturnMsg(false, null, null, null, false, 0);
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class DBCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public boolean doTransaction(DataStore db) {
+	public ReturnMsg doTransaction(DataStore db) {
 		String op = operationchooser.nextString();
 
 		if (op.compareTo("READ") == 0) {
@@ -216,7 +216,7 @@ public class DBCoreWorkload extends Workload {
 			doTransactionReadModifyWrite((DB)db);
 		}
 
-		return true;
+		return new ReturnMsg(true, null, null, null, false, 0);
 	}
 
 	public void doTransactionRead(DB db) {

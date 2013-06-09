@@ -17,6 +17,8 @@
 
 package com.yahoo.ycsb;
 
+import com.yahoo.ycsb.*;
+
 /**
  * One experiment scenario. One object of this type will be instantiated and
  * shared among all client threads. This class should be constructed using a
@@ -81,7 +83,7 @@ public abstract class Workload {
 	 * mutations on threadstate. Mutations to threadstate do not need to be
 	 * synchronized, since each thread has its own threadstate instance.
 	 */
-	public abstract boolean doInsert(DataStore db);
+	public abstract ReturnMsg doInsert(DataStore db);
 
 	/**
 	 * Do one transaction operation. Because it will be called concurrently from
@@ -98,5 +100,5 @@ public abstract class Workload {
 	 *         traces from a file, return true when there are more to do, false
 	 *         when you are done.
 	 */
-	public abstract boolean doTransaction(DataStore db);
+	public abstract ReturnMsg doTransaction(DataStore db);
 }

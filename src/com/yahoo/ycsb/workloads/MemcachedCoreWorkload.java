@@ -29,8 +29,6 @@ import com.yahoo.ycsb.generator.UniformIntegerGenerator;
 import com.yahoo.ycsb.generator.ZipfianGenerator;
 import com.yahoo.ycsb.memcached.Memcached;
 
-import java.util.Hashtable;
-
 /**
  * The core benchmark scenario. Represents a set of clients doing simple CRUD
  * operations. The relative proportion of different kinds of operations, and
@@ -87,8 +85,6 @@ public class MemcachedCoreWorkload extends Workload {
 	UniformIntegerGenerator midcostchooser;
 	
 	UniformIntegerGenerator lowcostchooser;
-	
-	Hashtable<String, Integer> costs;
 
 	boolean orderedinserts;
 
@@ -115,7 +111,6 @@ public class MemcachedCoreWorkload extends Workload {
 							Config.getConfig().mid_cost_max);
 		lowcostchooser = new UniformIntegerGenerator(Config.getConfig().low_cost_min,
 							Config.getConfig().low_cost_max);
-		costs = new Hashtable<String, Integer>();
 		
 		if (Config.getConfig().memadd_proportion > 0) {
 			operationchooser.addValue(Config.getConfig().memadd_proportion, "ADD");
@@ -211,7 +206,8 @@ public class MemcachedCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public boolean doInsert(DataStore memcached) {
+	public ReturnMsg doInsert(DataStore memcached) {
+		ReturnMsg result;
 		int keynum = keysequence.nextInt();
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
@@ -227,12 +223,14 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (costl.compareTo("LOW") == 0) {
 			cost = lowcostchooser.nextInt();
 		}
-		costs.put(dbkey, cost);
 		
-		if (((Memcached)memcached).set(dbkey, value) == 0)
-			return true;
-		else
-			return false;
+		if (((Memcached)memcached).set(dbkey, value) == 0) {
+			result = new ReturnMsg(true, "SET", dbkey, cost, false, 1);
+			return result;
+		} else {
+			result = new ReturnMsg(false, "SET", dbkey, cost, false, 1);
+			return result;
+		}
 	}
 
 	/**
@@ -242,9 +240,9 @@ public class MemcachedCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public boolean doTransaction(DataStore memcached) {
+	public ReturnMsg doTransaction(DataStore memcached) {
 		String op = operationchooser.nextString();
-
+		ReturnMsg result;
 		if (op.compareTo("ADD") == 0) {
 			doTransactionAdd((Memcached)memcached);
 		} else if (op.compareTo("APPEND") == 0) {
@@ -256,7 +254,7 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (op.compareTo("DELETE") == 0) {
 			doTransactionDelete((Memcached)memcached);
 		} else if (op.compareTo("GET") == 0) {
-			doTransactionGet((Memcached)memcached);
+			return doTransactionGet((Memcached)memcached);
 		} else if (op.compareTo("GETS") == 0) {
 			doTransactionGets((Memcached)memcached);
 		} else if (op.compareTo("INCR") == 0) {
@@ -266,11 +264,12 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (op.compareTo("REPLACE") == 0) {
 			doTransactionReplace((Memcached)memcached);
 		} else if (op.compareTo("SET") == 0) {
-			doInsert((Memcached)memcached);
+			return doInsert((Memcached)memcached);
 		} else if (op.compareTo("UPDATE") == 0) {
 			doTransactionUpdate((Memcached)memcached);
 		}
-		return true;
+		result = new ReturnMsg(true, null, null, null, false, 0);
+		return result;
 	}
 	
 	public void doTransactionAdd(Memcached memcached) {
@@ -320,8 +319,9 @@ public class MemcachedCoreWorkload extends Workload {
 		
 	}
 
-	public void doTransactionGet(Memcached memcached) {
+	public ReturnMsg doTransactionGet(Memcached memcached) {
 		int keynum;
+		ReturnMsg result;
 		do {
 			keynum = keychooser.nextInt();
 		} while (keynum > transactioninsertkeysequence.lastInt());
@@ -332,11 +332,27 @@ public class MemcachedCoreWorkload extends Workload {
 		String keyname = Config.getConfig().key_prefix + keynum;
 
 		if (memcached.get(keyname, null) != 0) {
-			Integer cost = costs.get(keyname);
-				if (cost != null) {
-					System.out.println("[MISS] " + cost);
-				}
+			String value = Utils.ASCIIString(Config.getConfig().value_length);
+			Integer cost = 0;
+			String costl = costchooser.nextString();
+			if (costl.compareTo("HIGH") == 0) {
+				cost = highcostchooser.nextInt();
+			} else if (costl.compareTo("MID") == 0) {
+				cost = midcostchooser.nextInt();
+			} else if (costl.compareTo("LOW") == 0) {
+				cost = lowcostchooser.nextInt();
+			}
+		
+			if (((Memcached)memcached).set(keyname, value) == 0) {
+				result = new ReturnMsg(true, "GET", keyname, cost, true, 2);
+				return result;
+			} else {
+				result = new ReturnMsg(false, "GET", keyname, cost, true, 1);
+				return result;
+			}
 		}
+		result = new ReturnMsg(true, "GET", keyname, null, false, 1);
+		return result;
 	}
 	
 	public long doTransactionGets(Memcached memcached) {
