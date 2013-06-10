@@ -31,6 +31,8 @@ public class ClientThreadPool extends ThreadGroup {
 
 		isAlive = true;
 		
+		total_miss_cost = 0;
+		total_miss = 0;
 		costs = new Hashtable<String, Integer>();
 		
 		for (int i = 0; i < numThreads; i++) {
@@ -83,10 +85,12 @@ public class ClientThreadPool extends ThreadGroup {
 				if (value == null) {
 					total_miss_cost += result.cost;
 					total_miss += 1;
+					System.out.println("[MISS] " + result.cost);
 					costs.put(result.dbkey, result.cost);
 				} else {
 					total_miss_cost += value;
 					total_miss += 1;
+					System.out.println("[MISS] " + value);
 				}
 				if (result.num_op == 2) {
 					ops--;
@@ -155,9 +159,8 @@ public class ClientThreadPool extends ThreadGroup {
 				e.printStackTrace();
 			}
 			
-			System.out.println("Client Thread Done");
-			System.out.println("Total Miss Cost: " + total_miss_cost);
-			System.out.println("Total Miss: " + total_miss);
+			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
+			+ " Total Miss = " + total_miss);
 		}
 	}
 }
