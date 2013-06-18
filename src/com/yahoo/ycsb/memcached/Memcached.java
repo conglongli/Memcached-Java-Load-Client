@@ -180,6 +180,8 @@ public abstract class Memcached extends DataStore{
 	 */
 	public abstract int set(String key, Object value);
 	
+	public abstract int set_cost(String key, Object value, int cost);
+	
 	public abstract int update(String key, Object value);
 
 }

@@ -21,6 +21,8 @@ public class ClientThreadPool extends ThreadGroup {
 	private int ops;
 	private int total_miss_cost;
 	private int total_miss;
+	private int num_get;
+	private int num_set;
 	private static int threadPoolID;
 	private Hashtable<String, Integer> costs;
 
@@ -33,6 +35,8 @@ public class ClientThreadPool extends ThreadGroup {
 		
 		total_miss_cost = 0;
 		total_miss = 0;
+		num_get = 0;
+		num_set = 0;
 		costs = new Hashtable<String, Integer>();
 		
 		for (int i = 0; i < numThreads; i++) {
@@ -72,30 +76,26 @@ public class ClientThreadPool extends ThreadGroup {
 		}
 	}
 	
-	public synchronized void processResult(ReturnMsg result) {
-		if (result.op.compareTo("SET") == 0) {
-			if (result.result == true) {
-				if (costs.get(result.dbkey) == null) {
-					costs.put(result.dbkey, result.cost);
-				}
+	public synchronized void processResult(ReturnMsg returnMsg) {
+		if (returnMsg.op.compareTo("SET") == 0) {
+			if (returnMsg.result == true) {
+				costs.put(returnMsg.dbkey, returnMsg.cost);
 			}
-		} else if (result.op.compareTo("GET") == 0) {
-			if (result.miss == true) {
-				Integer value = costs.get(result.dbkey);
+			num_set++;
+		} else if (returnMsg.op.compareTo("GET") == 0) {
+			if (returnMsg.miss == true) {
+				Integer value = costs.get(returnMsg.dbkey);
 				if (value == null) {
-					total_miss_cost += result.cost;
-					total_miss += 1;
-					System.out.println("[MISS] " + result.cost);
-					costs.put(result.dbkey, result.cost);
+					total_miss_cost += returnMsg.cost;
 				} else {
 					total_miss_cost += value;
-					total_miss += 1;
-					System.out.println("[MISS] " + value);
 				}
-				if (result.num_op == 2) {
-					ops--;
-				}
+				total_miss++;
+				num_set++;
+				costs.put(returnMsg.dbkey, returnMsg.cost);
+				ops--;
 			}
+			num_get++;
 		}
 	}
 
@@ -160,7 +160,7 @@ public class ClientThreadPool extends ThreadGroup {
 			}
 			
 			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
-			+ " Total Miss = " + total_miss);
+			+ " Total Miss = " + total_miss + " Num Get = " + num_get + " Num Set = " + num_set);
 		}
 	}
 }

@@ -207,7 +207,8 @@ public class MemcachedCoreWorkload extends Workload {
 	 * function would have no side effects other than DB operations.
 	 */
 	public ReturnMsg doInsert(DataStore memcached) {
-		ReturnMsg result;
+		ReturnMsg result_msg;
+		int result;
 		int keynum = keysequence.nextInt();
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
@@ -224,12 +225,18 @@ public class MemcachedCoreWorkload extends Workload {
 			cost = lowcostchooser.nextInt();
 		}
 		
-		if (((Memcached)memcached).set(dbkey, value) == 0) {
-			result = new ReturnMsg(true, "SET", dbkey, cost, false, 1);
-			return result;
+		if (Config.getConfig().default_set == true) {
+			result = ((Memcached)memcached).set(dbkey, value);
 		} else {
-			result = new ReturnMsg(false, "SET", dbkey, cost, false, 1);
-			return result;
+			result = ((Memcached)memcached).set_cost(dbkey, value, cost);
+		}
+		
+		if (result == 0) {
+			result_msg = new ReturnMsg(true, "SET", dbkey, cost, false);
+			return result_msg;
+		} else {
+			result_msg = new ReturnMsg(false, "SET", dbkey, cost, false);
+			return result_msg;
 		}
 	}
 
@@ -268,7 +275,7 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (op.compareTo("UPDATE") == 0) {
 			doTransactionUpdate((Memcached)memcached);
 		}
-		result = new ReturnMsg(true, null, null, null, false, 0);
+		result = new ReturnMsg(true, null, null, null, false);
 		return result;
 	}
 	
@@ -321,7 +328,8 @@ public class MemcachedCoreWorkload extends Workload {
 
 	public ReturnMsg doTransactionGet(Memcached memcached) {
 		int keynum;
-		ReturnMsg result;
+		ReturnMsg result_msg;
+		int result;
 		do {
 			keynum = keychooser.nextInt();
 		} while (keynum > transactioninsertkeysequence.lastInt());
@@ -342,17 +350,23 @@ public class MemcachedCoreWorkload extends Workload {
 			} else if (costl.compareTo("LOW") == 0) {
 				cost = lowcostchooser.nextInt();
 			}
-		
-			if (((Memcached)memcached).set(keyname, value) == 0) {
-				result = new ReturnMsg(true, "GET", keyname, cost, true, 2);
-				return result;
+			
+			if (Config.getConfig().default_set == true) {
+				result = ((Memcached)memcached).set(keyname, value);
 			} else {
-				result = new ReturnMsg(false, "GET", keyname, cost, true, 1);
-				return result;
+				result = ((Memcached)memcached).set_cost(keyname, value, cost);
+			}
+		
+			if (result == 0) {
+				result_msg = new ReturnMsg(true, "GET", keyname, cost, true);
+				return result_msg;
+			} else {
+				result_msg = new ReturnMsg(false, "GET", keyname, cost, true);
+				return result_msg;
 			}
 		}
-		result = new ReturnMsg(true, "GET", keyname, null, false, 1);
-		return result;
+		result_msg = new ReturnMsg(true, "GET", keyname, null, false);
+		return result_msg;
 	}
 	
 	public long doTransactionGets(Memcached memcached) {

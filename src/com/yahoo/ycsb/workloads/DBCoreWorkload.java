@@ -189,9 +189,9 @@ public class DBCoreWorkload extends Workload {
 			values.put(fieldkey, data);
 		}
 		if (((DB)db).insert(Config.getConfig().table_name, dbkey, values) == 0)
-			return new ReturnMsg(true, null, null, null, false, 0);
+			return new ReturnMsg(true, null, null, null, false);
 		else
-			return new ReturnMsg(false, null, null, null, false, 0);
+			return new ReturnMsg(false, null, null, null, false);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class DBCoreWorkload extends Workload {
 			doTransactionReadModifyWrite((DB)db);
 		}
 
-		return new ReturnMsg(true, null, null, null, false, 0);
+		return new ReturnMsg(true, null, null, null, false);
 	}
 
 	public void doTransactionRead(DB db) {

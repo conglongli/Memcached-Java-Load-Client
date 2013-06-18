@@ -64,6 +64,7 @@ public class Config implements Serializable{
 	public static final String LOW_COST_MAX_PROPERTY = "lowcostmax";
 	public static final String LOW_COST_MIN_PROPERTY = "lowcostmin";
 	public static final String LOW_COST_PROB_PROPERTY = "lowcostprob";
+	public static final String DEFAULT_SET_PROPERTY = "defaultset";
 	
 	public int churn_delta = 1;
 	public String db = null;
@@ -123,6 +124,7 @@ public class Config implements Serializable{
 	public int low_cost_max = 100;
 	public int low_cost_min = 51;
 	public double low_cost_prob = 0.8;
+	public boolean default_set = true;
 	
 	public static final String INSERT_COUNT_PROPERTY = "insertcount";
 	
@@ -251,6 +253,8 @@ public class Config implements Serializable{
 				low_cost_min = (new Integer(value)).intValue();
 			} else if (property.equals(LOW_COST_PROB_PROPERTY)) {
 				low_cost_prob = (new Double(value)).doubleValue();
+			} else if (property.equals(DEFAULT_SET_PROPERTY)) {
+				default_set = (new Boolean(value)).booleanValue();
 			} else {
 				System.out.println("Unknown property " + property + " with value " + value);
 				System.exit(0);

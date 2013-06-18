@@ -79,3 +79,4 @@ midcostprob=0.15
 lowcostmax=100
 lowcostmin=51
 lowcostprob=0.8
+defaultset=true

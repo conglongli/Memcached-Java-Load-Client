@@ -48,7 +48,7 @@ public class SpymemcachedClient extends Memcached {
 	}
 	
 	public void cleanup() {
-		if (client.isAlive())
+		//if (client.isAlive())
 			client.shutdown();
 	}
 	
@@ -133,6 +133,23 @@ public class SpymemcachedClient extends Memcached {
 	public int set(String key, Object value) {
 		try {
 			if (!client.set(key, 0, value).get().booleanValue()) {
+				System.out.println("SET: error getting data");
+				return -1;
+			}
+		} catch (InterruptedException e) {
+			System.out.println("SET Interrupted");
+		} catch (ExecutionException e) {
+			System.out.println("SET Execution");
+		} catch (RuntimeException e) {
+			System.out.println("SET Runtime");
+		}
+		return 0;
+	}
+	
+	@Override
+	public int set_cost(String key, Object value, int cost) {
+		try {
+			if (!client.set_cost(key, 0, value, cost).get().booleanValue()) {
 				System.out.println("SET: error getting data");
 				return -1;
 			}
