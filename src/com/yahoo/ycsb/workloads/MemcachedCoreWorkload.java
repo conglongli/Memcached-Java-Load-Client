@@ -228,7 +228,7 @@ public class MemcachedCoreWorkload extends Workload {
 		if (Config.getConfig().default_set == true) {
 			result = ((Memcached)memcached).set(dbkey, value);
 		} else {
-			result = ((Memcached)memcached).set_cost(dbkey, value, cost);
+			result = ((Memcached)memcached).set_cost(dbkey, value, (int)cost);
 		}
 		
 		if (result == 0) {
@@ -354,7 +354,7 @@ public class MemcachedCoreWorkload extends Workload {
 			if (Config.getConfig().default_set == true) {
 				result = ((Memcached)memcached).set(keyname, value);
 			} else {
-				result = ((Memcached)memcached).set_cost(keyname, value, cost);
+				result = ((Memcached)memcached).set_cost(keyname, value, (int)cost);
 			}
 		
 			if (result == 0) {
