@@ -76,7 +76,7 @@ public class SpymemcachedClient extends Memcached {
 		//long time = System.nanoTime();
 		try {
 			if (f.get() == null) {
-				System.out.println("GET: error getting data");
+				//System.out.println("GET: error getting data");
 				return -1;
 			}
 		} catch (InterruptedException e) {

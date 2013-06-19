@@ -78,9 +78,7 @@ public class ClientThreadPool extends ThreadGroup {
 	
 	public synchronized void processResult(ReturnMsg returnMsg) {
 		if (returnMsg.op.compareTo("SET") == 0) {
-			if (returnMsg.result == true) {
-				costs.put(returnMsg.dbkey, returnMsg.cost);
-			}
+			costs.put(returnMsg.dbkey, returnMsg.cost);
 			num_set++;
 		} else if (returnMsg.op.compareTo("GET") == 0) {
 			if (returnMsg.miss == true) {
