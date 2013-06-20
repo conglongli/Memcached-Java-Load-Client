@@ -213,7 +213,9 @@ public class MemcachedCoreWorkload extends Workload {
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
 		}
+		
 		String dbkey = Config.getConfig().key_prefix + keynum;
+		dbkey = dbkey.substring(dbkey.length() - 16 ,dbkey.length());
 		System.out.println("Prefix size = "+Config.getConfig().key_prefix.length());
 		System.out.println("Key size = "+dbkey.length());
 		String value = Utils.ASCIIString(Config.getConfig().value_length);
@@ -340,6 +342,7 @@ public class MemcachedCoreWorkload extends Workload {
 			keynum = Utils.hash(keynum);
 		}
 		String keyname = Config.getConfig().key_prefix + keynum;
+		keyname = keyname.substring(keyname.length() - 16 ,keyname.length());
 
 		if (memcached.get(keyname, null) != 0) {
 			String value = Utils.ASCIIString(Config.getConfig().value_length);
