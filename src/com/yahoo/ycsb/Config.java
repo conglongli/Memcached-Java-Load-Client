@@ -112,7 +112,7 @@ public class Config implements Serializable{
 	public double update_proportion = 0.05;
 	public int working_set = 1;
 	public int value_length = 256;
-	public String workload = null;
+	public String workload = "com.yahoo.ycsb.workloads.MemcachedCoreWorkload";
 	public boolean write_all_fields = false;
 	
 	public int high_cost_max = 500;
