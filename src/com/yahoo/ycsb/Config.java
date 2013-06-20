@@ -77,7 +77,7 @@ public class Config implements Serializable{
 	public String insert_order = "hashed";
 	public double insert_proportion = 0.0;
 	public int insert_start = 0;
-	public String key_prefix = "user";
+	public String key_prefix = "aaaaaaaaaaaaa";
 	public int operation_count = 0;
 	public String label = "";
 	public int max_scan_length = 1000;
