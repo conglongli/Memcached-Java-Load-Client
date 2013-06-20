@@ -214,6 +214,8 @@ public class MemcachedCoreWorkload extends Workload {
 			keynum = Utils.hash(keynum);
 		}
 		String dbkey = Config.getConfig().key_prefix + keynum;
+		int lth = dbkey.length();
+		System.out.println("Key size = "+lth);
 		String value = Utils.ASCIIString(Config.getConfig().value_length);
 		Integer cost = 0;
 		String costl = costchooser.nextString();

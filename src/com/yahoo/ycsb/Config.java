@@ -67,7 +67,7 @@ public class Config implements Serializable{
 	public static final String DEFAULT_SET_PROPERTY = "defaultset";
 	
 	public int churn_delta = 1;
-	public String db = null;
+	public String db = "com.yahoo.ycsb.db.SpymemcachedClient";
 	public boolean do_transactions = false;
 	public String exporter = "com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter";
 	public String export_file = null;
@@ -82,20 +82,20 @@ public class Config implements Serializable{
 	public String label = "";
 	public int max_scan_length = 1000;
 	public String measurement_type = "histogram";
-	public String memcached_address = null;
+	public String memcached_address = "168.7.151.75";
 	public int memcached_port = 11211;
 	public double memadd_proportion = 0.0;
 	public double memappend_proportion = 0.0;
 	public double memcas_proportion = 0.0;
 	public double memdecr_proportion = 0.0;
 	public double memdelete_proportion = 0.0;
-	public double memget_proportion = 0.95;
+	public double memget_proportion = 0.0;
 	public double memgets_proportion = 0.0;
 	public double memincr_proportion = 0.0;
 	public double memprepend_proportion = 0.0;
 	public double memreplace_proportion = 0.0;
 	public double memset_proportion = 0.0;
-	public double memupdate_proportion = 0.05;
+	public double memupdate_proportion = 0.0;
 	public int print_stats_interval = 5;
 	public boolean read_all_fields = true;
 	public double read_proportion = 0.95;
