@@ -100,5 +100,5 @@ public abstract class Workload {
 	 *         traces from a file, return true when there are more to do, false
 	 *         when you are done.
 	 */
-	public abstract ReturnMsg doTransaction(DataStore db);
+	public abstract ReturnMsg doTransaction(DataStore db, int num_set);
 }

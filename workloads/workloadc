@@ -14,25 +14,69 @@
 # LICENSE file.                                                                                                                                                                   
 
 # Yahoo! Cloud System Benchmark
-# Workload C: Read only
-#   Application example: user profile cache, where profiles are constructed elsewhere (e.g., Hadoop)
+# Workload B: Read mostly workload
+#   Application example: photo tagging; add a tag is an update, but most operations are to read tags
 #                        
-#   Read/update ratio: 100/0
+#   Read/update ratio: 95/5
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
 
-recordcount=1000
-operationcount=1000
-workload=com.yahoo.ycsb.workloads.CoreWorkload
+exportfile=workloadc_YCSB.output
+memgetproportion=0.9
+memsetproportion=0.1
+operationcount=11200000
+recordcount=1200000
+threadcount=4
+valuelength=2048
+highcostmax=1000
+highcostmin=51
+highcostprob=1
+midcostmax=250
+midcostmin=101
+midcostprob=0
+lowcostmax=100
+lowcostmin=51
+lowcostprob=0
+defaultset=true
 
-readallfields=true
-
-readproportion=1
-updateproportion=0
-scanproportion=0
-insertproportion=0
-
-requestdistribution=zipfian
-
-
-
+#churndelta=1
+#db=com.yahoo.ycsb.db.SpymemcachedClient
+#dotransactions=false
+#exporter=com.yahoo.ycsb.measurements.exporter.TextMeasurementsExporter
+#fieldcount=10
+#fieldlength=100
+#histogram.buckets=20
+#insertorder=hashed
+#insertproportion=0.0
+#insertstart=200000
+#keyprefix=aaaaaaaaaaaaa
+#label=
+#maxscanlength=1000
+#measurementtype=histogram
+#memcached.address=168.7.151.75
+#memcached.port=11211
+#memaddproportion=0.0
+#memappendproportion=0.0
+#memcasproportion=0.0
+#memdecrproportion=0.0
+#memdeleteproportion=0.0
+#memgetsproportion=0.0
+#memincrproporiton=0.0
+#memprependproportion=0.0
+#memreplaceproportion=0.0
+#memupdateproportion=0.0
+#printstatsinterval=5
+#readallfields=true
+#readproportion=0.95
+#readmodifywriteproportion=0.0
+#requestdistribution=zipfian
+#scanlengthdistribution=uniform
+#scanproportion=0.0
+#slaveaddress=10.17.7.102
+#table=usertable
+#target=10000
+#timeseries.granularity=1000
+#updateproportion=0.0
+#workingset=100000
+#workload=com.yahoo.ycsb.workloads.MemcachedCoreWorkload
+#writeallfields=false

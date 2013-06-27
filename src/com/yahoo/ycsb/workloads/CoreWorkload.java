@@ -10,7 +10,7 @@ public abstract class CoreWorkload extends Workload{
 	public abstract ReturnMsg doInsert(DataStore db);
 
 	@Override
-	public abstract ReturnMsg doTransaction(DataStore db);
+	public abstract ReturnMsg doTransaction(DataStore db, int num_set);
 	
 	
 

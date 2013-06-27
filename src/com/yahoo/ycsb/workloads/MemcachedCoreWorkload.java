@@ -249,7 +249,7 @@ public class MemcachedCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public ReturnMsg doTransaction(DataStore memcached) {
+	public ReturnMsg doTransaction(DataStore memcached, int num_set) {
 		String op = operationchooser.nextString();
 		ReturnMsg result;
 		if (op.compareTo("ADD") == 0) {
@@ -277,6 +277,12 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (op.compareTo("UPDATE") == 0) {
 			doTransactionUpdate((Memcached)memcached);
 		}
+		/*if ((double)num_set/(double)(Config.getConfig().operation_count - 
+		    Config.getConfig().record_count) > Config.getConfig().memset_proportion) {
+			return doTransactionGet((Memcached)memcached);
+		} else {
+			return doInsert((Memcached)memcached);
+		}*/
 		result = new ReturnMsg(true, null, null, null, false);
 		return result;
 	}

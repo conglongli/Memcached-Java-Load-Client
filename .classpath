@@ -9,6 +9,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-asl-1.5.2.jar"/>
-	<classpathentry kind="lib" path="lib/spymemcached-2.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/spymemcached-2.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -201,7 +201,7 @@ public class DBCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public ReturnMsg doTransaction(DataStore db) {
+	public ReturnMsg doTransaction(DataStore db, int num_set) {
 		String op = operationchooser.nextString();
 
 		if (op.compareTo("READ") == 0) {

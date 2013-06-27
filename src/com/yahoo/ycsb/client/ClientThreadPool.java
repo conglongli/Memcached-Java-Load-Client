@@ -76,10 +76,11 @@ public class ClientThreadPool extends ThreadGroup {
 		}
 	}
 	
-	public synchronized void processResult(ReturnMsg returnMsg) {
+	public synchronized void processResult(ReturnMsg returnMsg, int flag) {
 		if (returnMsg.op.compareTo("SET") == 0) {
 			costs.put(returnMsg.dbkey, returnMsg.cost);
-			num_set++;
+			if (flag == 0)
+				num_set++;
 		} else if (returnMsg.op.compareTo("GET") == 0) {
 			if (returnMsg.miss == true) {
 				Integer value = costs.get(returnMsg.dbkey);
@@ -89,9 +90,9 @@ public class ClientThreadPool extends ThreadGroup {
 					total_miss_cost += value;
 				}
 				total_miss++;
-				num_set++;
+				//num_set++;
 				costs.put(returnMsg.dbkey, returnMsg.cost);
-				ops--;
+				//ops--;
 			}
 			num_get++;
 		}
@@ -142,11 +143,11 @@ public class ClientThreadPool extends ThreadGroup {
 					workload.doInsert(db);
 				}*/
 				if (Config.getConfig().operation_count - ops > Config.getConfig().record_count) {
-					ReturnMsg result = workload.doTransaction(db);
-					processResult(result);
+					ReturnMsg result = workload.doTransaction(db, num_set);
+					processResult(result, 0);
 				} else {
 					ReturnMsg result = workload.doInsert(db);
-					processResult(result);
+					processResult(result, 1);
 				}
 			}
 			

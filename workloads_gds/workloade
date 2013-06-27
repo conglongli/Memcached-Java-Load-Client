@@ -21,23 +21,23 @@
 #   Default data size: 1 KB records (10 fields, 100 bytes each, plus key)
 #   Request distribution: zipfian
 
-exportfile=workloadb_YCSB.output
+exportfile=workloade_gds_YCSB.output
 memgetproportion=0.9
 memsetproportion=0.1
 operationcount=11200000
 recordcount=1200000
 threadcount=4
-valuelength=2048
-highcostmax=100
-highcostmin=100
-highcostprob=1
+valuelength=1024
+highcostmax=500
+highcostmin=251
+highcostprob=0.05
 midcostmax=250
 midcostmin=101
-midcostprob=0
+midcostprob=0.15
 lowcostmax=100
 lowcostmin=51
-lowcostprob=0
-defaultset=true
+lowcostprob=0.8
+defaultset=false
 
 #churndelta=1
 #db=com.yahoo.ycsb.db.SpymemcachedClient
