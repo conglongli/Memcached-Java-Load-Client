@@ -86,10 +86,6 @@ do
 
 		# Start YCSB
 		java -cp $YCSB_DIR/build/ycsb.jar:$LIB_DIR/spymemcached-2.9.0.jar:$LIB_DIR/jackson-core-asl-1.5.2.jar:$LIB_DIR/jackson-mapper-asl-1.5.2.jar:$LIB_DIR/slf4j-api-1.6.1.jar:$LIB_DIR/slf4j-simple-1.6.1.jar com.yahoo.ycsb.LoadGenerator -t -P $filename >> $OUTPUT_DIR/${outputname}.output
-
-        # Get memcached stats
-        echo "stats" | nc -q 3 sp08.cs.rice.edu 11211 > $OUTPUT_DIR/${outputname}_server_stats
-        echo "stats slabs" | nc -q 3 sp08.cs.rice.edu 11211 > $OUTPUT_DIR/${outputname}_server_stats_slabs
     done
 done
 

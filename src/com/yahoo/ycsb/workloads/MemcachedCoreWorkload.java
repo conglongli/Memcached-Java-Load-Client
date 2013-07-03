@@ -209,6 +209,7 @@ public class MemcachedCoreWorkload extends Workload {
 	public ReturnMsg doInsert(DataStore memcached) {
 		ReturnMsg result_msg;
 		int result;
+		String value = null;
 		int keynum = keysequence.nextInt();
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
@@ -216,15 +217,18 @@ public class MemcachedCoreWorkload extends Workload {
 		
 		String dbkey = Config.getConfig().key_prefix + keynum;
 		dbkey = dbkey.substring(dbkey.length() - 16 ,dbkey.length());
-		String value = Utils.ASCIIString(Config.getConfig().value_length);
+		//String value = Utils.ASCIIString(Config.getConfig().value_length);
 		Integer cost = 0;
 		String costl = costchooser.nextString();
 		if (costl.compareTo("HIGH") == 0) {
 			cost = highcostchooser.nextInt();
+			value = Utils.ASCIIString(Config.getConfig().high_value_length);
 		} else if (costl.compareTo("MID") == 0) {
 			cost = midcostchooser.nextInt();
+			value = Utils.ASCIIString(Config.getConfig().mid_value_length);
 		} else if (costl.compareTo("LOW") == 0) {
 			cost = lowcostchooser.nextInt();
+			value = Utils.ASCIIString(Config.getConfig().low_value_length);
 		}
 		
 		if (Config.getConfig().default_set == true) {
@@ -349,15 +353,19 @@ public class MemcachedCoreWorkload extends Workload {
 		keyname = keyname.substring(keyname.length() - 16 ,keyname.length());
 
 		if (memcached.get(keyname, null) != 0) {
-			String value = Utils.ASCIIString(Config.getConfig().value_length);
+			//String value = Utils.ASCIIString(Config.getConfig().value_length);
 			Integer cost = 0;
+			String value = null;
 			String costl = costchooser.nextString();
 			if (costl.compareTo("HIGH") == 0) {
 				cost = highcostchooser.nextInt();
+				value = Utils.ASCIIString(Config.getConfig().high_value_length);
 			} else if (costl.compareTo("MID") == 0) {
 				cost = midcostchooser.nextInt();
+				value = Utils.ASCIIString(Config.getConfig().mid_value_length);
 			} else if (costl.compareTo("LOW") == 0) {
 				cost = lowcostchooser.nextInt();
+				value = Utils.ASCIIString(Config.getConfig().low_value_length);
 			}
 			
 			if (Config.getConfig().default_set == true) {

@@ -66,6 +66,10 @@ public class Config implements Serializable{
 	public static final String LOW_COST_PROB_PROPERTY = "lowcostprob";
 	public static final String DEFAULT_SET_PROPERTY = "defaultset";
 	
+	public static final String HIGH_VALUE_LENGTH_PROPERTY = "highvaluelength";
+	public static final String MID_VALUE_LENGTH_PROPERTY = "midvaluelength";
+	public static final String LOW_VALUE_LENGTH_PROPERTY = "lowvaluelength";
+	
 	public int churn_delta = 1;
 	public String db = "com.yahoo.ycsb.db.SpymemcachedClient";
 	public boolean do_transactions = false;
@@ -125,6 +129,10 @@ public class Config implements Serializable{
 	public int low_cost_min = 51;
 	public double low_cost_prob = 0.8;
 	public boolean default_set = true;
+	
+	public int high_value_length = 4096;
+	public int mid_value_length = 2048;
+	public int low_value_length = 1024;
 	
 	public static final String INSERT_COUNT_PROPERTY = "insertcount";
 	
@@ -255,6 +263,12 @@ public class Config implements Serializable{
 				low_cost_prob = (new Double(value)).doubleValue();
 			} else if (property.equals(DEFAULT_SET_PROPERTY)) {
 				default_set = (new Boolean(value)).booleanValue();
+			} else if (property.equals(HIGH_VALUE_LENGTH_PROPERTY)) {
+				high_value_length = (new Integer(value)).intValue();
+			} else if (property.equals(MID_VALUE_LENGTH_PROPERTY)) {
+				mid_value_length = (new Integer(value)).intValue();
+			} else if (property.equals(LOW_VALUE_LENGTH_PROPERTY)) {
+				low_value_length = (new Integer(value)).intValue();
 			} else {
 				System.out.println("Unknown property " + property + " with value " + value);
 				System.exit(0);
