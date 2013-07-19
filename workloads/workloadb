@@ -22,23 +22,23 @@
 #   Request distribution: zipfian
 
 exportfile=workloadb_YCSB.output
-memgetproportion=0.9
-memsetproportion=0.1
-operationcount=11200000
-recordcount=1200000
+memgetproportion=0.95
+memsetproportion=0.05
+operationcount=17500000
+recordcount=7500000
 threadcount=4
 valuelength=2048
-highvaluelength=4096
-midvaluelength=3072
-lowvaluelength=2048
+highvaluelength=256
+midvaluelength=256
+lowvaluelength=256
 highcostmax=100
 highcostmin=100
 highcostprob=1
 midcostmax=250
-midcostmin=101
+midcostmin=200
 midcostprob=0
 lowcostmax=100
-lowcostmin=51
+lowcostmin=50
 lowcostprob=0
 defaultset=true
 
