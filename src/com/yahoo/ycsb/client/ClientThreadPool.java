@@ -9,7 +9,7 @@ import com.yahoo.ycsb.Workload;
 import com.yahoo.ycsb.database.DBFactory;
 import com.yahoo.ycsb.memcached.MemcachedFactory;
 
-import java.util.Hashtable;
+import java.util.*;
 
 /**
  * A thread pool is a group of a limited number of threads that are used to
@@ -25,6 +25,7 @@ public class ClientThreadPool extends ThreadGroup {
 	private int num_set;
 	private static int threadPoolID;
 	private Hashtable<String, Integer> costs;
+	private Hashtable<Integer, Integer> dist;
 
 	public ClientThreadPool(int numThreads, int ops, Workload workload) {
 		super("ThreadPool-" + (threadPoolID++));
@@ -38,6 +39,7 @@ public class ClientThreadPool extends ThreadGroup {
 		num_get = 0;
 		num_set = 0;
 		costs = new Hashtable<String, Integer>();
+		dist = new Hashtable<Integer, Integer>();
 		
 		for (int i = 0; i < numThreads; i++) {
 			DataStore db = null;
@@ -86,8 +88,20 @@ public class ClientThreadPool extends ThreadGroup {
 				Integer value = costs.get(returnMsg.dbkey);
 				if (value == null) {
 					total_miss_cost += returnMsg.cost;
+					Integer occur = dist.get(returnMsg.cost);
+					if (occur == null) {
+						dist.put(returnMsg.cost, 1);
+					} else {
+						dist.put(returnMsg.cost, occur+1);
+					}
 				} else {
 					total_miss_cost += value;
+					Integer occur = dist.get(value);
+					if (occur == null) {
+						dist.put(value, 1);
+					} else {
+						dist.put(value, occur+1);
+					}
 				}
 				total_miss++;
 				//num_set++;
@@ -160,6 +174,12 @@ public class ClientThreadPool extends ThreadGroup {
 			
 			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
 			+ " Total Miss = " + total_miss + " Num Get = " + num_get + " Num Set = " + num_set);
+			
+			Integer[] keys = (Integer[]) dist.keySet().toArray(new Integer[0]);  
+			Arrays.sort(keys);  
+			for(Integer key : keys) {  
+				System.out.println(key + " : " + dist.get(key));  
+			}
 		}
 	}
 }
