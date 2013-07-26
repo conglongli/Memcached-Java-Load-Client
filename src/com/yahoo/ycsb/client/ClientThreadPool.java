@@ -175,11 +175,15 @@ public class ClientThreadPool extends ThreadGroup {
 			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
 			+ " Total Miss = " + total_miss + " Num Get = " + num_get + " Num Set = " + num_set);
 			
-			Integer[] keys = (Integer[]) dist.keySet().toArray(new Integer[0]);  
-			Arrays.sort(keys);  
-			for(Integer key : keys) {  
-				System.out.println(key + " : " + dist.get(key));  
+			System.out.println("[");  
+			for(int key = 0; key <= 450; key++) {
+				if (dist.get(key) == null) { 
+					System.out.print("0,");
+				} else {  
+					System.out.print((int)dist.get(key)+","); 
+				} 
 			}
+			System.out.print("]");
 		}
 	}
 }
