@@ -17,6 +17,7 @@ import java.util.*;
  */
 public class ClientThreadPool extends ThreadGroup {
 	private boolean isAlive;
+	private int printStat;
 	private int threadID;
 	private int ops;
 	private int total_miss_cost;
@@ -33,6 +34,7 @@ public class ClientThreadPool extends ThreadGroup {
 		setDaemon(true);
 
 		isAlive = true;
+		printStat = 0;
 		
 		total_miss_cost = 0;
 		total_miss = 0;
@@ -111,6 +113,25 @@ public class ClientThreadPool extends ThreadGroup {
 			num_get++;
 		}
 	}
+	
+	public synchronized void processStat() {
+		if (printStat == 3) {
+			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
+			+ " Total Miss = " + total_miss + " Num Get = " + num_get + " Num Set = " + num_set);
+			
+			System.out.println("[");  
+			for(int key = 0; key <= 450; key++) {
+				if (dist.get(key) == null) { 
+					System.out.print("0,");
+				} else {  
+					System.out.print((int)dist.get(key)+","); 
+				} 
+			}
+			System.out.print("]");
+		} else {
+			printStat++;
+		}
+	}
 
 	/**
 	 * Closes this ThreadPool and waits for all running threads to finish. Any
@@ -172,18 +193,7 @@ public class ClientThreadPool extends ThreadGroup {
 				e.printStackTrace();
 			}
 			
-			System.out.println("Client Thread Done. Total Miss Cost = " + total_miss_cost 
-			+ " Total Miss = " + total_miss + " Num Get = " + num_get + " Num Set = " + num_set);
-			
-			System.out.println("[");  
-			for(int key = 0; key <= 450; key++) {
-				if (dist.get(key) == null) { 
-					System.out.print("0,");
-				} else {  
-					System.out.print((int)dist.get(key)+","); 
-				} 
-			}
-			System.out.print("]");
+			processStat();
 		}
 	}
 }
