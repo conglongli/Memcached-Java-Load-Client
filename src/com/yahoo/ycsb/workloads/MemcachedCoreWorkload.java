@@ -206,7 +206,7 @@ public class MemcachedCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public ReturnMsg doInsert(DataStore memcached) {
+	public ReturnMsg doInsert(DataStore memcached, int load) {
 		ReturnMsg result_msg;
 		int result;
 		String value = null;
@@ -232,9 +232,9 @@ public class MemcachedCoreWorkload extends Workload {
 		}
 		
 		if (Config.getConfig().default_set == true) {
-			result = ((Memcached)memcached).set(dbkey, value);
+			result = ((Memcached)memcached).set(dbkey, value, load);
 		} else {
-			result = ((Memcached)memcached).set_cost(dbkey, value, (int)cost);
+			result = ((Memcached)memcached).set_cost(dbkey, value, load, (int)cost);
 		}
 		
 		if (result == 0) {
@@ -277,7 +277,7 @@ public class MemcachedCoreWorkload extends Workload {
 		} else if (op.compareTo("REPLACE") == 0) {
 			doTransactionReplace((Memcached)memcached);
 		} else if (op.compareTo("SET") == 0) {
-			return doInsert((Memcached)memcached);
+			return doInsert((Memcached)memcached, 0);
 		} else if (op.compareTo("UPDATE") == 0) {
 			doTransactionUpdate((Memcached)memcached);
 		}
@@ -369,9 +369,9 @@ public class MemcachedCoreWorkload extends Workload {
 			}
 			
 			if (Config.getConfig().default_set == true) {
-				result = ((Memcached)memcached).set(keyname, value);
+				result = ((Memcached)memcached).set(keyname, value, 0);
 			} else {
-				result = ((Memcached)memcached).set_cost(keyname, value, (int)cost);
+				result = ((Memcached)memcached).set_cost(keyname, value, 0, (int)cost);
 			}
 		
 			if (result == 0) {
@@ -440,7 +440,7 @@ public class MemcachedCoreWorkload extends Workload {
 		}
 		String keyname = Config.getConfig().key_prefix + keynum;
 		String value = Utils.ASCIIString(Config.getConfig().value_length);
-		memcached.set(keyname, value);
+		memcached.set(keyname, value, 0);
 	}
 	
 	public void doTransactionUpdate(Memcached memcached) {

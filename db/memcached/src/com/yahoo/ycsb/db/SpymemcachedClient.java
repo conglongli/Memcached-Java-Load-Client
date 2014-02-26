@@ -130,8 +130,9 @@ public class SpymemcachedClient extends Memcached {
 	
 
 	@Override
-	public int set(String key, Object value) {
+	public int set(String key, Object value, int load) {
 		try {
+			load = load+1;
 			if (!client.set(key, 0, value).get().booleanValue()) {
 				System.out.println("SET: error getting data");
 				return -1;
@@ -147,8 +148,9 @@ public class SpymemcachedClient extends Memcached {
 	}
 	
 	@Override
-	public int set_cost(String key, Object value, int cost) {
+	public int set_cost(String key, Object value, int load, int cost) {
 		try {
+			load = load+1;
 			if (!client.set_cost(key, 0, value, cost).get().booleanValue()) {
 				System.out.println("SET: error getting data");
 				return -1;
@@ -262,6 +264,6 @@ public class SpymemcachedClient extends Memcached {
 
 	@Override
 	public int update(String key, Object value) {
-		return set(key, value);
+		return set(key, value, 0);
 	}
 }

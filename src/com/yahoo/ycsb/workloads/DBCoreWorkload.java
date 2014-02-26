@@ -176,8 +176,9 @@ public class DBCoreWorkload extends Workload {
 	 * it will be difficult to reach the target throughput. Ideally, this
 	 * function would have no side effects other than DB operations.
 	 */
-	public ReturnMsg doInsert(DataStore db) {
+	public ReturnMsg doInsert(DataStore db, int load) {
 		int keynum = keysequence.nextInt();
+		load = load+1;
 		if (!orderedinserts) {
 			keynum = Utils.hash(keynum);
 		}

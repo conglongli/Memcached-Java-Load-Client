@@ -178,9 +178,9 @@ public abstract class Memcached extends DataStore{
 	 * @return Zero on success, a non-zero error code on error. See this class's
 	 *         description for a discussion of error codes.
 	 */
-	public abstract int set(String key, Object value);
+	public abstract int set(String key, Object value, int load);
 	
-	public abstract int set_cost(String key, Object value, int cost);
+	public abstract int set_cost(String key, Object value, int load, int cost);
 	
 	public abstract int update(String key, Object value);
 

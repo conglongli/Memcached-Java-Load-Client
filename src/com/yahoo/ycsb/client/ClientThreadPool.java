@@ -20,7 +20,7 @@ public class ClientThreadPool extends ThreadGroup {
 	private int printStat;
 	private int threadID;
 	private int ops;
-	private int total_miss_cost;
+	private long total_miss_cost;
 	private int total_miss;
 	private int num_get;
 	private int num_set;
@@ -89,7 +89,7 @@ public class ClientThreadPool extends ThreadGroup {
 			if (returnMsg.miss == true) {
 				Integer value = costs.get(returnMsg.dbkey);
 				if (value == null) {
-					total_miss_cost += returnMsg.cost;
+					total_miss_cost += (long)returnMsg.cost;
 					Integer occur = dist.get(returnMsg.cost);
 					if (occur == null) {
 						dist.put(returnMsg.cost, 1);
@@ -97,7 +97,7 @@ public class ClientThreadPool extends ThreadGroup {
 						dist.put(returnMsg.cost, occur+1);
 					}
 				} else {
-					total_miss_cost += value;
+					total_miss_cost += (long)value;
 					Integer occur = dist.get(value);
 					if (occur == null) {
 						dist.put(value, 1);
@@ -181,7 +181,7 @@ public class ClientThreadPool extends ThreadGroup {
 					ReturnMsg result = workload.doTransaction(db, num_set);
 					processResult(result, 0);
 				} else {
-					ReturnMsg result = workload.doInsert(db);
+					ReturnMsg result = workload.doInsert(db, 0);
 					processResult(result, 1);
 				}
 			}

@@ -10,9 +10,13 @@ CONFIG_DIR="../workloads_gds"
 
 OUTPUT_DIR="../output"
 
+RUN_TIME=10000
+
 LIB_DIR="../lib"
 
 YCSB_DIR="/home/cl19/YCSB/Memcached-Java-Load-Client"
+
+USE_TOP=1
 
 NUM_ITERATIONS=1
 
@@ -72,9 +76,10 @@ do
             outputname="${outputname}_gdsreplace"
         fi
 
-        mem=2048
+        mem=10240
 
         # Start memcached server
+	ssh cl19@sp08.cs.rice.edu 'pkill memcached'
         ssh cl19@sp08.cs.rice.edu "bash scripts/memcached_server.sh $USE_GDS -m $mem" 
 
         echo $config_file > $OUTPUT_DIR/${outputname}.output
@@ -85,7 +90,22 @@ do
         fi
 
 		# Start YCSB
-		java -cp $YCSB_DIR/build/ycsb.jar:$LIB_DIR/spymemcached-2.9.0.jar:$LIB_DIR/jackson-core-asl-1.5.2.jar:$LIB_DIR/jackson-mapper-asl-1.5.2.jar:$LIB_DIR/slf4j-api-1.6.1.jar:$LIB_DIR/slf4j-simple-1.6.1.jar com.yahoo.ycsb.LoadGenerator -t -P $filename >> $OUTPUT_DIR/${outputname}.output 
+		java -Xmx32000m -Xms32000m -cp $YCSB_DIR/build/ycsb.jar:$LIB_DIR/spymemcached-2.9.0.jar:$LIB_DIR/jackson-core-asl-1.5.2.jar:$LIB_DIR/jackson-mapper-asl-1.5.2.jar:$LIB_DIR/slf4j-api-1.6.1.jar:$LIB_DIR/slf4j-simple-1.6.1.jar com.yahoo.ycsb.LoadGenerator -t -P $filename >> $OUTPUT_DIR/${outputname}.output 
+		#if [ $USE_TOP -eq 1 ]; then
+            # start cpu script on server
+            #ssh cl19@sp08.cs.rice.edu "nohup scripts/cpu.sh -t $RUN_TIME > scripts/output/${outputname}_top_output 2> cpu.err < /dev/null &"
+                
+            # start cpu script on client
+            #./cpu.sh -t $RUN_TIME > $OUTPUT_DIR/${outputname}_client_top_output
+                
+            #sleep 5   # make sure memaslap finishes before continuing
+                
+            # download output to client
+            #scp cl19@sp08.cs.rice.edu:scripts/output/${outputname}_top_output $OUTPUT_DIR/${outputname}_server_top_output
+        #fi
+		# Get memcached stats
+            echo "stats" | nc -q 3 sp08.cs.rice.edu 11211 > $OUTPUT_DIR/${outputname}_server_stats
+            echo "stats slabs" | nc -q 3 sp08.cs.rice.edu 11211 > $OUTPUT_DIR/${outputname}_server_stats_slabs
     done
 done
 

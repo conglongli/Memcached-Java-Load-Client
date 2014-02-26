@@ -7,7 +7,7 @@ import com.yahoo.ycsb.ReturnMsg;
 public abstract class CoreWorkload extends Workload{
 
 	@Override
-	public abstract ReturnMsg doInsert(DataStore db);
+	public abstract ReturnMsg doInsert(DataStore db, int load);
 
 	@Override
 	public abstract ReturnMsg doTransaction(DataStore db, int num_set);

@@ -83,7 +83,7 @@ public abstract class Workload {
 	 * mutations on threadstate. Mutations to threadstate do not need to be
 	 * synchronized, since each thread has its own threadstate instance.
 	 */
-	public abstract ReturnMsg doInsert(DataStore db);
+	public abstract ReturnMsg doInsert(DataStore db, int load);
 
 	/**
 	 * Do one transaction operation. Because it will be called concurrently from

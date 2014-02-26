@@ -187,8 +187,10 @@ public class MemcachedWrapper extends Memcached {
 		long st = System.nanoTime();
 		int res = _db.get(key, value);
 		long en = System.nanoTime();
-		_measurements.measure("GET", (int) ((en - st) / 1000));
-		_measurements.reportReturnCode("GET", res);
+		//if ((int) ((en-st)/1000) <= 5000) {
+			_measurements.measure("GET", (int) ((en - st) / 1000));
+			_measurements.reportReturnCode("GET", res);
+		//}
 		return res;
 	}
 
@@ -262,27 +264,33 @@ public class MemcachedWrapper extends Memcached {
 	 *            The Object to use as the keys value
 	 * @return Zero on success, a non-zero error code on error
 	 */
-	public int set(String key, Object value) {
+	public int set(String key, Object value, int load) {
 		long st = System.nanoTime();
-		int res = _db.set(key, value);
+		int res = _db.set(key, value, load);
 		long en = System.nanoTime();
+		//if (load == 0 && (int) ((en-st)/1000) <= 5000) {
+		if (load == 0) {
 		_measurements.measure("SET", (int) ((en - st) / 1000));
 		_measurements.reportReturnCode("SET", res);
+		}
 		return res;
 	}
 	
-	public int set_cost(String key, Object value, int cost) {
+	public int set_cost(String key, Object value, int load, int cost) {
 		long st = System.nanoTime();
-		int res = _db.set_cost(key, value, cost);
+		int res = _db.set_cost(key, value, load, cost);
 		long en = System.nanoTime();
+		//if (load == 0 && (int) ((en-st)/1000) <= 5000) {
+		if (load == 0) {
 		_measurements.measure("SET", (int) ((en - st) / 1000));
 		_measurements.reportReturnCode("SET", res);
+		}
 		return res;
 	}
 	
 	public int update(String key, Object value) {
 		long st = System.nanoTime();
-		int res = _db.set(key, value);
+		int res = _db.set(key, value, 0);
 		long en = System.nanoTime();
 		_measurements.measure("UPDATE", (int) ((en - st) / 1000));
 		_measurements.reportReturnCode("UPDATE", res);
